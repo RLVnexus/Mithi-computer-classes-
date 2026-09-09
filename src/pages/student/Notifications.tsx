@@ -17,8 +17,8 @@ export default function StudentNotifications() {
         // Add some dummy if empty
         if (notifs.length === 0) {
           setNotifications([
-            { id: '1', title: 'Holiday Tomorrow', message: 'The institute will remain closed tomorrow due to local festival.', targetAudience: 'all', createdAt: Date.now() - 86400000 },
-            { id: '2', title: 'Fee Reminder', message: 'Please clear your pending dues before the 10th of this month.', targetAudience: 'all', createdAt: Date.now() - 172800000 },
+            { id: '1', title: 'Holiday Tomorrow', message: 'The institute will remain closed tomorrow due to local festival.', targetType: 'all', createdBy: 'admin', createdAt: Date.now() - 86400000 },
+            { id: '2', title: 'Fee Reminder', message: 'Please clear your pending dues before the 10th of this month.', targetType: 'all', createdBy: 'admin', createdAt: Date.now() - 172800000 },
           ]);
         } else {
           setNotifications(notifs.sort((a, b) => b.createdAt - a.createdAt));

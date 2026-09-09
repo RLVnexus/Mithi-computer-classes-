@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Students collection
+    match /students/{studentId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+      allow write: if isAdmin();
+    }
+    
+    // Everything else defaults to Admin write, mixed read
+    match /teachers/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    match /courses/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /batches/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /lessons/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /attendance/{docId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.studentUid == request.auth.uid);
+      allow write: if isAdmin();
+    }
+    match /payments/{docId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.studentUid == request.auth.uid);
+      allow write: if isAdmin();
+    }
+    match /classLogs/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    match /activityLogs/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    match /notifications/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
